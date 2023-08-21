@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
 List<Plant> plants = new List<Plant>()
 {
@@ -73,15 +74,15 @@ while (choice != "0")
     }
     else if (choice == "2")
     {
-        throw new NotImplementedException("Post a plant to be adopted");
+        PostAPlant();
     }
     else if (choice == "3")
     {
-        throw new NotImplementedException("Adopt a plant");
+        AdoptAPlant();
     }
     else if (choice == "4")
     {
-        throw new NotImplementedException("Delist a plant");
+        DelistAPlant();
     }
     else
     {
@@ -94,14 +95,80 @@ void DisplayAllPlants()
     for (int i = 0; i < plants.Count; i++)
     {
         Console.WriteLine($"{i + 1}. {plants[i].Species} in {plants[i].City} {(plants[i].Sold ? "was sold" : "is available")} for {plants[i].AskingPrice} dollars");
-    } 
+    }
 }
 void PostAPlant()
 {
     Console.WriteLine("Please input your plant's species");
-    string postedPlantSpecies = Console.ReadLine().Trim();
+    string newPlantSpecies = Console.ReadLine().Trim();
     Console.WriteLine("Please input your plant's light needs ranging from 1 - 5");
-    int postedPlantLightNeeds = int.Parse(Console.ReadLine().Trim());
+    int newPlantLightNeeds = int.Parse(Console.ReadLine().Trim());
     Console.WriteLine("Please input the asking price for your plant");
-    decimal postedPlantAskingPrice = decimal.Parse(Console.ReadLine().Trim());
+    decimal newPlantAskingPrice = decimal.Parse(Console.ReadLine().Trim());
+    Console.WriteLine("Please input your city");
+    string newPlantCity = Console.ReadLine().Trim();
+    Console.WriteLine("Please input your ZIP");
+    int newPlantZIP = int.Parse(Console.ReadLine().Trim());
+
+    Plant newPlant = new Plant()
+    {
+        Species = newPlantSpecies,
+        LightNeeds = newPlantLightNeeds,
+        AskingPrice = newPlantAskingPrice,
+        City = newPlantCity,
+        ZIP = newPlantZIP,
+        Sold = false
+    };
+
+    plants.Add(newPlant);
+}
+void AdoptAPlant()
+{
+    //create a new empty list to store the unsold plants
+    List<Plant> adoptablePlants = new List<Plant>();
+    //loop through the plants
+    foreach (Plant plant in plants)
+    {
+        //add each plant that is unsold to the adoptablePlants List
+        if (!plant.Sold)
+        {
+            adoptablePlants.Add(plant);
+        }
+    }
+    Console.WriteLine("Adoptable plants:");
+    //print the adoptable plant list to the console
+    for (int i = 0; i < adoptablePlants.Count; i++)
+    {
+        Console.WriteLine($"{i + 1}. {adoptablePlants[i].Species}");
+    }
+    Plant chosenPlant = null;
+    while (chosenPlant == null)
+    {
+        try
+        {
+            int response = int.Parse(Console.ReadLine().Trim());
+            chosenPlant = adoptablePlants[response - 1];
+        }
+        catch (FormatException)
+        {
+            Console.WriteLine("Please type only integers!");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            Console.WriteLine("Do Better!");
+        }
+    }
+    chosenPlant.Sold = true;
+    Console.WriteLine($"You chose {chosenPlant.Species}!");
+}
+void DelistAPlant()
+{
+    Console.WriteLine("Choose a plant to delist");
+        for (int i = 0; i < plants.Count; i++)
+    {
+        Console.WriteLine($"{i + 1}. {plants[i].Species}");
+    }
+    int response = int.Parse(Console.ReadLine().Trim());
+    plants.RemoveAt(response - 1);
 }
