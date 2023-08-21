@@ -16,7 +16,7 @@ List<Plant> plants = new List<Plant>()
     new Plant()
     {
         Species = "Tulip",
-        LightNeeds = 4,
+        LightNeeds = 3,
         AskingPrice = 2.75M,
         City = "Old Hickory",
         ZIP = 37176,
@@ -36,7 +36,7 @@ List<Plant> plants = new List<Plant>()
     new Plant()
     {
         Species = "Black Rose",
-        LightNeeds = 1,
+        LightNeeds = 2,
         AskingPrice = 6.66M,
         City = "Nashville",
         ZIP = 37209,
@@ -46,7 +46,7 @@ List<Plant> plants = new List<Plant>()
     new Plant()
     {
         Species = "Turnip",
-        LightNeeds = 5,
+        LightNeeds = 3,
         AskingPrice = 1.75M,
         City = "Ashland City",
         ZIP = 37015,
@@ -72,7 +72,8 @@ while (choice != "0")
                         3. Adopt a plant
                         4. Delist a plant
                         5. Random plant of the day
-                        6. Search plants by light needs");
+                        6. Search plants by light needs
+                        7. View statistics");
     choice = Console.ReadLine();
     if (choice == "0")
     {
@@ -101,6 +102,10 @@ while (choice != "0")
     else if (choice == "6")
     {
         SearchByLightNeeds();
+    }
+    else if (choice == "7")
+    {
+        ViewStats();
     }
     else
     {
@@ -133,9 +138,8 @@ void PostAPlant()
     int newPlantMonthExp = int.Parse(Console.ReadLine().Trim());
     Console.WriteLine("Please enter the day your post will expire");
     int newPlantDayExp = int.Parse(Console.ReadLine().Trim());
+    try{
     DateTime newPlantYMDExp = new DateTime(newPlantYearExp, newPlantMonthExp, newPlantDayExp);
-
-
     Plant newPlant = new Plant()
     {
         Species = newPlantSpecies,
@@ -148,6 +152,11 @@ void PostAPlant()
     };
 
     plants.Add(newPlant);
+    }
+    catch (ArgumentOutOfRangeException)
+    {
+        Console.WriteLine("That date shows as invalid, please choose a date that exists!");
+    }
 }
 void AdoptAPlant()
 {
@@ -234,4 +243,53 @@ void SearchByLightNeeds()
     {
         Console.WriteLine($"{i + 1}. {lightNeedsPlants[i].Species}");
     }
+}
+void ViewStats()
+{
+    double totalPlantCount = plants.Count;
+    Plant cheapestPlant = new Plant()
+    {
+        AskingPrice = 100
+    };
+    foreach (Plant plant in plants)
+    {
+        if (plant.AskingPrice < cheapestPlant.AskingPrice)
+        {
+            cheapestPlant = plant;
+        }
+    };
+    Console.WriteLine($"The cheapest plant in our selection is the {cheapestPlant.Species}");
+    List<Plant> availablePlants = new List<Plant>();
+    DateTime now = DateTime.Now;
+    //loop through the plants
+    foreach (Plant plant in plants)
+    {
+        //add each plant that is unsold to the availablePlants List
+        if (!plant.Sold && plant.AvailableUntil > now)
+        {
+            availablePlants.Add(plant);
+        }
+    }
+    int availablePlantCount = availablePlants.Count;
+    Console.WriteLine($"There are currently {availablePlantCount} plants available for adoption");
+    Plant neediestPlant = new Plant()
+    {
+        LightNeeds = 1
+    };
+    foreach (Plant plant in plants)
+    {
+        if (plant.LightNeeds > neediestPlant.LightNeeds)
+        {
+            neediestPlant = plant;
+        }
+    }
+    Console.WriteLine($"Our neediest plant is the {neediestPlant.Species}, with a light need of {neediestPlant.LightNeeds}!");
+    int totalLightNeeds = 0;
+    foreach (Plant plant in plants)
+    {
+        totalLightNeeds += plant.LightNeeds;
+    }
+    double totalLightNeedsAsDouble = (double)totalLightNeeds;
+    double avgLightNeeds = totalLightNeeds / totalPlantCount;
+    Console.WriteLine($"The average light needs of all our plants is {avgLightNeeds}.");
 }
