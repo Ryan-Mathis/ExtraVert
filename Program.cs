@@ -6,11 +6,12 @@ List<Plant> plants = new List<Plant>()
     new Plant()
     {
         Species = "Rose",
-        LightNeeds = 3,
+        LightNeeds = 2,
         AskingPrice = 5.75M,
         City = "Nashville",
         ZIP = 37214,
-        Sold = true
+        Sold = true,
+        AvailableUntil = new DateTime(2023, 10, 25)
     },
     new Plant()
     {
@@ -19,7 +20,8 @@ List<Plant> plants = new List<Plant>()
         AskingPrice = 2.75M,
         City = "Old Hickory",
         ZIP = 37176,
-        Sold = false
+        Sold = false,
+        AvailableUntil = new DateTime(2023, 12, 12)
     },
     new Plant()
     {
@@ -28,7 +30,8 @@ List<Plant> plants = new List<Plant>()
         AskingPrice = 5.75M,
         City = "Hendersonville",
         ZIP = 37075,
-        Sold = false
+        Sold = false,
+        AvailableUntil = new DateTime(2023, 7, 11)
     },
     new Plant()
     {
@@ -37,16 +40,18 @@ List<Plant> plants = new List<Plant>()
         AskingPrice = 6.66M,
         City = "Nashville",
         ZIP = 37209,
-        Sold = false
+        Sold = false,
+        AvailableUntil = new DateTime(2023, 8, 25)
     },
     new Plant()
     {
         Species = "Turnip",
-        LightNeeds = 4,
+        LightNeeds = 5,
         AskingPrice = 1.75M,
         City = "Ashland City",
         ZIP = 37015,
-        Sold = true
+        Sold = true,
+        AvailableUntil = new DateTime(2023, 11, 25)
     },
 };
 
@@ -66,7 +71,8 @@ while (choice != "0")
                         2. Post a plant to be adopted
                         3. Adopt a plant
                         4. Delist a plant
-                        5. Random Plant of the Day");
+                        5. Random plant of the day
+                        6. Search plants by light needs");
     choice = Console.ReadLine();
     if (choice == "0")
     {
@@ -91,6 +97,10 @@ while (choice != "0")
     else if (choice == "5")
     {
         RandomPlant();
+    }
+    else if (choice == "6")
+    {
+        SearchByLightNeeds();
     }
     else
     {
@@ -117,6 +127,14 @@ void PostAPlant()
     string newPlantCity = Console.ReadLine().Trim();
     Console.WriteLine("Please input your ZIP");
     int newPlantZIP = int.Parse(Console.ReadLine().Trim());
+    Console.WriteLine("Please enter the year your post will expire");
+    int newPlantYearExp = int.Parse(Console.ReadLine().Trim());
+    Console.WriteLine("Please enter the month your post will expire");
+    int newPlantMonthExp = int.Parse(Console.ReadLine().Trim());
+    Console.WriteLine("Please enter the day your post will expire");
+    int newPlantDayExp = int.Parse(Console.ReadLine().Trim());
+    DateTime newPlantYMDExp = new DateTime(newPlantYearExp, newPlantMonthExp, newPlantDayExp);
+
 
     Plant newPlant = new Plant()
     {
@@ -125,7 +143,8 @@ void PostAPlant()
         AskingPrice = newPlantAskingPrice,
         City = newPlantCity,
         ZIP = newPlantZIP,
-        Sold = false
+        Sold = false,
+        AvailableUntil = newPlantYMDExp 
     };
 
     plants.Add(newPlant);
@@ -134,11 +153,13 @@ void AdoptAPlant()
 {
     //create a new empty list to store the unsold plants
     List<Plant> adoptablePlants = new List<Plant>();
+    DateTime now = DateTime.Now;
+
     //loop through the plants
     foreach (Plant plant in plants)
     {
         //add each plant that is unsold to the adoptablePlants List
-        if (!plant.Sold)
+        if (!plant.Sold && plant.AvailableUntil > now)
         {
             adoptablePlants.Add(plant);
         }
@@ -195,4 +216,22 @@ void RandomPlant()
     }
         randomPlant = plants[randomInteger];
     Console.WriteLine($@"Today's random plant is a {randomPlant.Species}, it has a light need rating of {randomPlant.LightNeeds}, and is located in {randomPlant.City} for {randomPlant.AskingPrice}.");
+}
+void SearchByLightNeeds()
+{
+    Console.WriteLine("Please enter the maximum light needs number you can cater to in your space(scale of 1 - 5)");
+    int response = int.Parse(Console.ReadLine().Trim());
+    List<Plant> lightNeedsPlants = new List<Plant>();
+    foreach (Plant plant in plants)
+    {
+        if (plant.LightNeeds <= response)
+        {
+            lightNeedsPlants.Add(plant);
+        }
+    }
+    Console.WriteLine("The following plants are suitable for your space's light requirements:");
+    for (int i = 0; i < lightNeedsPlants.Count; i++)
+    {
+        Console.WriteLine($"{i + 1}. {lightNeedsPlants[i].Species}");
+    }
 }
