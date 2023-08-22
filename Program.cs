@@ -117,7 +117,7 @@ void DisplayAllPlants()
 {
     for (int i = 0; i < plants.Count; i++)
     {
-        Console.WriteLine($"{i + 1}. {plants[i].Species} in {plants[i].City} {(plants[i].Sold ? "was sold" : "is available")} for {plants[i].AskingPrice} dollars");
+        Console.WriteLine($"{i + 1}. {PlantDetails(plants[i])} in {plants[i].City} {(plants[i].Sold ? "was sold" : "is available")} for {plants[i].AskingPrice} dollars");
     }
 }
 void PostAPlant()
@@ -138,20 +138,21 @@ void PostAPlant()
     int newPlantMonthExp = int.Parse(Console.ReadLine().Trim());
     Console.WriteLine("Please enter the day your post will expire");
     int newPlantDayExp = int.Parse(Console.ReadLine().Trim());
-    try{
-    DateTime newPlantYMDExp = new DateTime(newPlantYearExp, newPlantMonthExp, newPlantDayExp);
-    Plant newPlant = new Plant()
+    try
     {
-        Species = newPlantSpecies,
-        LightNeeds = newPlantLightNeeds,
-        AskingPrice = newPlantAskingPrice,
-        City = newPlantCity,
-        ZIP = newPlantZIP,
-        Sold = false,
-        AvailableUntil = newPlantYMDExp 
-    };
+        DateTime newPlantYMDExp = new DateTime(newPlantYearExp, newPlantMonthExp, newPlantDayExp);
+        Plant newPlant = new Plant()
+        {
+            Species = newPlantSpecies,
+            LightNeeds = newPlantLightNeeds,
+            AskingPrice = newPlantAskingPrice,
+            City = newPlantCity,
+            ZIP = newPlantZIP,
+            Sold = false,
+            AvailableUntil = newPlantYMDExp
+        };
 
-    plants.Add(newPlant);
+        plants.Add(newPlant);
     }
     catch (ArgumentOutOfRangeException)
     {
@@ -177,7 +178,7 @@ void AdoptAPlant()
     //print the adoptable plant list to the console
     for (int i = 0; i < adoptablePlants.Count; i++)
     {
-        Console.WriteLine($"{i + 1}. {adoptablePlants[i].Species}");
+        Console.WriteLine($"{i + 1}. {PlantDetails(adoptablePlants[i])}");
     }
     Plant chosenPlant = null;
     while (chosenPlant == null)
@@ -198,12 +199,12 @@ void AdoptAPlant()
         }
     }
     chosenPlant.Sold = true;
-    Console.WriteLine($"You chose {chosenPlant.Species}!");
+    Console.WriteLine($"You chose {PlantDetails(chosenPlant)}!");
 }
 void DelistAPlant()
 {
     Console.WriteLine("Choose a plant to delist");
-        for (int i = 0; i < plants.Count; i++)
+    for (int i = 0; i < plants.Count; i++)
     {
         Console.WriteLine($"{i + 1}. {plants[i].Species}");
     }
@@ -215,16 +216,17 @@ void RandomPlant()
     Plant randomPlant = null;
     while (randomPlant == null)
     {
-        if (plants[randomInteger].Sold) 
+        if (plants[randomInteger].Sold)
         {
-        randomInteger = random.Next(0, plants.Count + 1);
+            randomInteger = random.Next(0, plants.Count + 1);
         }
-        else {
+        else
+        {
             randomPlant = plants[randomInteger];
         }
     }
-        randomPlant = plants[randomInteger];
-    Console.WriteLine($@"Today's random plant is a {randomPlant.Species}, it has a light need rating of {randomPlant.LightNeeds}, and is located in {randomPlant.City} for {randomPlant.AskingPrice}.");
+    randomPlant = plants[randomInteger];
+    Console.WriteLine($@"Today's random plant is a {PlantDetails(randomPlant)}, it has a light need rating of {randomPlant.LightNeeds}, and is located in {randomPlant.City} for {randomPlant.AskingPrice}.");
 }
 void SearchByLightNeeds()
 {
@@ -241,7 +243,7 @@ void SearchByLightNeeds()
     Console.WriteLine("The following plants are suitable for your space's light requirements:");
     for (int i = 0; i < lightNeedsPlants.Count; i++)
     {
-        Console.WriteLine($"{i + 1}. {lightNeedsPlants[i].Species}");
+        Console.WriteLine($"{i + 1}. {PlantDetails(lightNeedsPlants[i])}");
     }
 }
 void ViewStats()
@@ -258,7 +260,7 @@ void ViewStats()
             cheapestPlant = plant;
         }
     };
-    Console.WriteLine($"The cheapest plant in our selection is the {cheapestPlant.Species}");
+    Console.WriteLine($"The cheapest plant in our selection is the {PlantDetails(cheapestPlant)}");
     List<Plant> availablePlants = new List<Plant>();
     DateTime now = DateTime.Now;
     //loop through the plants
@@ -283,7 +285,7 @@ void ViewStats()
             neediestPlant = plant;
         }
     }
-    Console.WriteLine($"Our neediest plant is the {neediestPlant.Species}, with a light need of {neediestPlant.LightNeeds}!");
+    Console.WriteLine($"Our neediest plant is the {PlantDetails(neediestPlant)}, with a light need of {neediestPlant.LightNeeds}!");
     int totalLightNeeds = 0;
     foreach (Plant plant in plants)
     {
@@ -292,4 +294,10 @@ void ViewStats()
     double totalLightNeedsAsDouble = (double)totalLightNeeds;
     double avgLightNeeds = totalLightNeeds / totalPlantCount;
     Console.WriteLine($"The average light needs of all our plants is {avgLightNeeds}.");
+}
+string PlantDetails(Plant plant)
+{
+    string plantString = plant.Species;
+
+    return plantString;
 }
